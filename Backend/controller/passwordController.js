@@ -7,7 +7,7 @@ import sendEmail from "../utils/emailSender.js";
 
 //update password function
 const updatePassword = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user);
     const { current_password, new_password, confirm_password } = req.body;
 
     // Validate input
