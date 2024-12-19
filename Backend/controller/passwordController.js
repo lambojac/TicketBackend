@@ -6,34 +6,39 @@ import asyncHandler from "express-async-handler";
 import sendEmail from "../utils/emailSender.js";
 
 //update password function
-const updatePassword = asyncHandler( async (req, res) => {
-
+const updatePassword = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
-    const { oldpassword, password } = req.body;
+    const { current_password, new_password, confirm_password } = req.body;
 
-    //validate password
-    if(!user) {
+    // Validate input
+    if (!user) {
         res.status(400);
-        throw new Error("User not found, Please sign in");
+        throw new Error("User not found. Please sign in.");
     }
 
-    if(!oldpassword || !password) {
+    if (!current_password || !new_password || !confirm_password) {
         res.status(400);
-        throw new Error("Please provide old password and new password");
-    
-    }    
-    //validate old password
-    const isMatch = await bcrypt.compare(oldpassword, user.password);
+        throw new Error("Please provide current password, new password, and confirm password.");
+    }
 
-    // Save new Password
-    if(user && isMatch) {
-        user.password = password;
-        await user.save();
-        res.status(200).send({ message: "Password changed"});
-    } else{
-    res.status(400);
-    throw new Error("Old password is incorrect");
-}
+    // Validate old password
+    const isMatch = await bcrypt.compare(current_password, user.password);
+
+    if (!isMatch) {
+        res.status(400);
+        throw new Error("Current password is incorrect.");
+    }
+
+    // Validate new password and confirm password match
+    if (new_password !== confirm_password) {
+        res.status(400);
+        throw new Error("New password and confirm password do not match.");
+    }
+
+    // Save new password
+    user.password = new_password;
+    await user.save();
+    res.status(200).send({ message: "Password changed successfully" });
 });
 
 // Forgot password function
