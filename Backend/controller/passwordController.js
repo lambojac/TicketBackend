@@ -44,63 +44,50 @@ const updatePassword = asyncHandler(async (req, res) => {
 // Forgot password function
 const forgotPassword = asyncHandler( async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
- 
-    //error handling
+
+    // Error handling: check if the user exists
     if(!user) {
         res.status(400);
         throw new Error("User does not exist");
     }
 
-    // Delete token if found in db after validating user
-    let token = await Token.findOne({ userId: user._id });
-    if(token) {
-        await token.deleteOne();
-    }
+    // Generate a 6-digit random token (you can change it to 4 digits if needed)
+    const resetToken = Math.floor(100000 + Math.random() * 900000).toString(); // Generates a 6-digit number
+    console.log(resetToken);  // Used to send in email (you may remove this in production)
 
-    // create fresh reset token if user email is found
-    let resetToken = crypto.randomBytes(32).toString("hex") + user._id;
-    console.log(resetToken);//Used to reset password if mail service is available
-   
+    // Hash token for security before storing it (optional, depending on your use case)
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest("hex");
 
-    // Hash token before saving to DB
-    const hashedToken = crypto.createHash('sha256').update(resetToken).digest("hex");// This is crypto method of hashing token
-
-    // Save hashed token to DB
+    // Save the hashed token and its expiration to the database
     await new Token({
         userId: user._id,
         token: hashedToken,
         createdAt: Date.now(),
-        expiresAt: Date.now() + 20 * (60 * 1000),//20 mins
-    }).save(); 
+        expiresAt: Date.now() + 15 * 60 * 1000, // Token expires in 15 minutes
+    }).save();
 
-const resetUrl = `{process.env.CLIENT_URL}/resetpassword/${resetToken}`;
+    // Send the token via email
+    const message = `
+    <h1>Hello ${user.name}</h1>
+    <p>Your password reset token is: <strong>${resetToken}</strong></p>
+    <p>This token is valid for only 15 minutes.</p>
+    <p>Use this token on the password reset page to reset your password.</p>
+    `;
+    
+    const subject = "Password Reset Token";
+    const send_to = user.email;
+    const sent_from = process.env.EMAIL_USER;
 
-
-// Reset Email
-const message = `
-<h1>Hello ${user.name}</h1>
-<p>Please use the url below to reset your password</p>  
-<p>This reset link is valid for only 20minutes.</p>
-
-<a href=${resetUrl} clicktracking=off>${resetUrl}</a>
-
-<p>Regards...</p>
-<p>Jay App Team</p>
-`;
-const subject = "Password Reset Request";
-const send_to = user.email;
-const sent_from = process.env.EMAIL_USER;
-
-// error handling
-try {
-
-    await sendEmail(subject, message, send_to, sent_from);
-    res.status(200).json({ success: true, message: "Reset Email Sent" });
-} catch (error) {
-    res.status(500);
-    throw new Error("Email not sent, please try again");
-}
+    // Error handling for email sending
+    try {
+        await sendEmail(subject, message, send_to, sent_from);
+        res.status(200).json({ success: true, message: "Reset Token Sent" });
+    } catch (error) {
+        res.status(500);
+        throw new Error("Email not sent, please try again");
+    }
 });
+
 
 
 

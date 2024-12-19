@@ -4,9 +4,13 @@ import bcrypt from "bcryptjs";
 const userSchema = new mongoose.Schema({
     full_name: {
         type: String,
-        required: [true, "Please provide your first name"],
+        required: [true, "Please provide your full name"], // Changed to full name as you might want first + last name
     },
     
+    name: {
+        type: String, 
+    },
+
     email: {
         type: String,
         required: [true, "Please provide an email"],
@@ -17,28 +21,37 @@ const userSchema = new mongoose.Schema({
             "Please enter a valid email",
         ],
     },
+
     password: {
         type: String,
         required: [true, "Please provide a password"],
         minLength: [6, "Password must have at least 6 characters"],
     },
+
     phone_number: {
         type: String,
         default: "+234",
     },
-    confirm_password:{
-       type:String,
+
+    confirm_password: {
+        type: String,
     },
-    
     
 }, { timestamps: true });
 
-// Hash the password before saving
+// Pre-save hook to extract the first name from full_name
 userSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
+    if (this.full_name) {
+        // Split full name to extract the first name
+        const firstName = this.full_name.split(" ")[0];
+        this.name = firstName; // Set name to first name
+    }
 
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    // Hash the password before saving
+    if (this.isModified("password")) {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+    }
     next();
 });
 
