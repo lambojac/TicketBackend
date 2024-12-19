@@ -37,15 +37,19 @@ const loginUser = asynchandler(async (req, res) => {
     });
 
     const {
-        full_name,
-        email,
-        phone_number,
-    } = user;
-    res.status(200).json({
+      _id,
       full_name,
       email,
       phone_number,
-      token
+    } = user;
+
+    // Include the user ID in the response
+    res.status(200).json({
+      id: _id,
+      full_name,
+      email,
+      phone_number,
+      token,
     });
   } else {
     res.status(400);
