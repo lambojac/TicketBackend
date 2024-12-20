@@ -2,18 +2,16 @@ import User from "../models/userModel.js";
 
 export const deleteAccount = async (req, res) => {
   try {
-    const { email, userId } = req.query; 
+    const {  userId } = req.query; 
 
     // Check if either email or userId is provided
-    if (!email && !userId) {
-      return res.status(400).json({ message: "Email or user ID is required" });
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
     }
 
     // Create the query based on whether email or userId is provided
     let query = {};
-    if (email) {
-      query = { email };  // Search by email
-    } else if (userId) {
+     if (userId) {
       query = { _id: userId };  // Search by userId
     }
 
