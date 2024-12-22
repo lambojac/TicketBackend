@@ -7,6 +7,7 @@ import { connectDB } from "./config/DbConn.js";
 import userRouter from "./routes/userRoutes.js";
 import errorHandler from "./middleware/errorMiddleware.js";
 import cookieParser from "cookie-parser";
+import eventRoutes from "./routes/eventRoutes.js"
 
 const app = express();
 dotenv.config();
@@ -24,7 +25,7 @@ app.use(bodyParser.json());
 
 // routes middleware
 app.use("/api/users", userRouter);
-
+app.use("/api/events",eventRoutes)
 
 
 //route
