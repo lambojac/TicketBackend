@@ -29,13 +29,35 @@ const eventController = {
   // Create new event
   createEvent: async (req, res) => {
     try {
-      const event = new Event(req.body);
+      const { title, location, date, price, category, time, address, latitude, longitude, organiser, description, unit } = req.body;
+
+      // Convert uploaded image to Base64
+      const image = req.file ? req.file.buffer.toString('base64') : null;
+
+      const event = new Event({
+        title,
+        location,
+        date,
+        price,
+        category,
+        time,
+        address,
+        latitude,
+        longitude,
+        organiser,
+        description,
+        unit,
+        image, // Store the image in Base64 format
+      });
+
       const savedEvent = await event.save();
       res.status(201).json(savedEvent);
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
   },
+
+  
 
   // Update event
   updateEvent: async (req, res) => {
