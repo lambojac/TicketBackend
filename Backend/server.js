@@ -8,6 +8,7 @@ import userRouter from "./routes/userRoutes.js";
 import errorHandler from "./middleware/errorMiddleware.js";
 import cookieParser from "cookie-parser";
 import eventRoutes from "./routes/eventRoutes.js"
+import Countries from "./routes/Country.js"
 
 const app = express();
 dotenv.config();
@@ -26,7 +27,7 @@ app.use(bodyParser.json());
 // routes middleware
 app.use("/api/users", userRouter);
 app.use("/api/events",eventRoutes)
-
+app.use("/api/country",Countries)
 
 //route
 app.get("/", (req, res) => {
