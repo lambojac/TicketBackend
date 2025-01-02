@@ -9,6 +9,7 @@ import errorHandler from "./middleware/errorMiddleware.js";
 import cookieParser from "cookie-parser";
 import eventRoutes from "./routes/eventRoutes.js"
 import Countries from "./routes/Country.js"
+import bookmark from "./routes/booKMark.js"
 
 const app = express();
 dotenv.config();
@@ -28,6 +29,7 @@ app.use(bodyParser.json());
 app.use("/api/users", userRouter);
 app.use("/api/events",eventRoutes)
 app.use("/api/country",Countries)
+app.use("/api/bookmark",bookmark)
 
 //route
 app.get("/", (req, res) => {

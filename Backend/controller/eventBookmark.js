@@ -1,7 +1,6 @@
-// controllers/userController.js
-const User = require('../models/User');
+import User from "../models/userModel.js";
 
-const userController = {
+const bookMarkController = {
   // Get user profile
   getProfile: async (req, res) => {
     try {
@@ -50,28 +49,5 @@ const userController = {
   }
 };
 
-module.exports = userController;
 
-///
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  image: String,
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  phone: String,
-  interests: [{
-    type: String
-  }],
-  bookmarkedEvents: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Event'
-  }]
-}, {
-  timestamps: true
-});
+export  default bookMarkController

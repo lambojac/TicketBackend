@@ -36,6 +36,13 @@ const userSchema = new mongoose.Schema({
     confirm_password: {
         type: String,
     },
+    interests: [{
+        type: String
+      }],
+      bookmarkedEvents: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Event'
+      }]
     
 }, { timestamps: true });
 
