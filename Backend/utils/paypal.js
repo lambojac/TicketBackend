@@ -1,59 +1,81 @@
-import { createOrder, capturePayment } from '../utils/paypal.js';
-import Ticket from '../models/Event.js';
+import fetch from 'node-fetch';
+import dotenv from 'dotenv';
 
-// Create an order and redirect to PayPal
-const createOrderController = async (req, res) => {
-    try {
-        const { ticketId, ticketCount } = req.body;
-        if (!ticketId || !ticketCount) {
-            return res.status(400).send('Ticket ID and count are required.');
-        }
+// Load environment variables
+dotenv.config();
 
-        // Fetch the ticket from the database
-        const ticket = await Ticket.findById(ticketId);
-        if (!ticket) {
-            return res.status(404).send('Ticket not found.');
-        }
+const PAYPAL_API = process.env.PAYPAL_API || 'https://api-m.sandbox.paypal.com'; // Sandbox or Live API
+const CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
+const CLIENT_SECRET = process.env.PAYPAL_SECRET;
 
-        // Calculate total price
-        const ticketPrice = parseFloat(ticket.price);
-        if (isNaN(ticketPrice)) {
-            return res.status(400).send('Invalid ticket price.');
-        }
+// Function to get an access token from PayPal
+const getAccessToken = async () => {
+    const credentials = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64');
+    const response = await fetch(`${PAYPAL_API}/v1/oauth2/token`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Basic ${credentials}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'grant_type=client_credentials',
+    });
 
-        const totalPrice = ticketPrice * parseInt(ticketCount, 10);
-
-        // Create PayPal order
-        const order = await createOrder(totalPrice);
-
-        // Find the approval URL
-        const approvalUrl = order.links.find(link => link.rel === 'approve').href;
-        res.redirect(approvalUrl);
-    } catch (error) {
-        res.status(500).send('Error creating order: ' + error.message);
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Failed to fetch PayPal access token: ${errorData.error_description}`);
     }
+
+    const data = await response.json();
+    return data.access_token;
 };
 
-// Complete the order
-const completeOrderController = async (req, res) => {
-    try {
-        const { token } = req.query;
-        if (!token) {
-            return res.status(400).send('Missing payment token.');
-        }
+// Function to create an order for ticket purchase
+export const createOrder = async (totalPrice) => {
+    const accessToken = await getAccessToken();
+    const response = await fetch(`${PAYPAL_API}/v2/checkout/orders`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            intent: 'CAPTURE',
+            purchase_units: [
+                {
+                    description: 'Ticket Purchase', // Describe transaction
+                    amount: {
+                        currency_code: 'USD', // currency
+                        value: totalPrice.toFixed(2),
+                    },
+                },
+            ],
+        }),
+    });
 
-        // Capture payment
-        const capture = await capturePayment(token);
-
-        res.send('Payment successful: ' + JSON.stringify(capture));
-    } catch (error) {
-        res.status(500).send('Error completing order: ' + error.message);
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Failed to create PayPal order: ${errorData.message}`);
     }
+
+    const orderData = await response.json();
+    return orderData;
 };
 
-// Handle canceled orders
-const cancelOrderController = (req, res) => {
-    res.redirect('/');
-};
+// Function to capture a payment for ticket purchase
+export const capturePayment = async (token) => {
+    const accessToken = await getAccessToken();
+    const response = await fetch(`${PAYPAL_API}/v2/checkout/orders/${token}/capture`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        },
+    });
 
-export { createOrderController, completeOrderController, cancelOrderController };
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Failed to capture PayPal payment: ${errorData.message}`);
+    }
+
+    const captureData = await response.json();
+    return captureData;
+};

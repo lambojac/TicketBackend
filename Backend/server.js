@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import eventRoutes from "./routes/eventRoutes.js"
 import Countries from "./routes/Country.js"
 import bookmark from "./routes/booKMark.js"
+import payment from "./routes/payment.js"
 
 const app = express();
 dotenv.config();
@@ -30,7 +31,7 @@ app.use("/api/users", userRouter);
 app.use("/api/events",eventRoutes)
 app.use("/api/country",Countries)
 app.use("/api/bookmark",bookmark)
-
+app.use("/api/paypal",payment)
 //route
 app.get("/", (req, res) => {
     res.send("Home Page!");
