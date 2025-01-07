@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema({
+    image: {
+        type: String,
+        default: null, // Explicitly set to null if not provided
+    },
     full_name: {
         type: String,
         required: [true, "Please provide your full name"], // Changed to full name as you might want first + last name
@@ -32,7 +36,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "+234",
     },
-
+    
     confirm_password: {
         type: String,
     },

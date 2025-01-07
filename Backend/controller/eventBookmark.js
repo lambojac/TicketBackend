@@ -5,7 +5,7 @@ const bookMarkController = {
   getProfile: async (req, res) => {
     try {
         const user = await User.findById(req.params.id)
-            .select('name phone_number interests image');
+            .select('full_name phone_number interests image');
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
