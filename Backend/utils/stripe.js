@@ -8,11 +8,16 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Function to create a payment intent
 export const createStripePaymentIntent = async (totalPrice) => {
+    if (!Number.isInteger(totalPrice)) {
+        throw new Error('Total price must be a whole number in EUR.');
+    }
+
     const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(totalPrice * 100), // Stripe expects amounts in cents
-        currency: 'usd',
+        amount: totalPrice,
+        currency: 'eur',
         payment_method_types: ['card'], // Accepting card payments
     });
+
     return paymentIntent;
 };
 

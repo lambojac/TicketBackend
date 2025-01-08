@@ -11,7 +11,7 @@ import eventRoutes from "./routes/eventRoutes.js"
 import Countries from "./routes/Country.js"
 import bookmark from "./routes/booKMark.js"
 import payment from "./routes/payment.js"
-
+import stripe from "./routes/stripe.js"
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT;
@@ -32,6 +32,7 @@ app.use("/api/events",eventRoutes)
 app.use("/api/country",Countries)
 app.use("/api/bookmark",bookmark)
 app.use("/api/paypal",payment)
+app.use("/api/stripe",stripe)
 //route
 app.get("/", (req, res) => {
     res.send("Home Page!");
