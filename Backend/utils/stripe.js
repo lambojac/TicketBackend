@@ -13,7 +13,7 @@ export const createStripePaymentIntent = async (totalPrice) => {
     }
 
     const paymentIntent = await stripe.paymentIntents.create({
-        amount: totalPrice,
+        amount: totalPrice *100,
         currency: 'eur',
         payment_method_types: ['card'], // Accepting card payments
     });
