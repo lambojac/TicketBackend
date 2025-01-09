@@ -4,7 +4,7 @@ import asyncHandler from "express-async-handler";
 
 const Secure = asyncHandler( async (req, res, next) => {
     try {
-        const token = req.cookies.token;
+        const token = req.headers.token;
         //console.log(token);
 
         if (!token) {
