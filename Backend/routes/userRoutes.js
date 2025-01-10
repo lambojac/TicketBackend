@@ -4,6 +4,7 @@ import { loginUser, logOut }  from '../controller/login.js';
 import { updatePassword, forgotPassword, resetPassword } from '../controller/passwordController.js';
 import { deleteAccount } from '../controller/deleteAccount.js';
 import bookMarkController from '../controller/eventBookmark.js';
+import upload from "../middleware/multer.js"
 // import confirmEmail from '../controllers/confirmEmail.js';
 
 
@@ -19,5 +20,5 @@ router.patch('/updatepassword', updatePassword);
 router.post('/forgotpassword',  forgotPassword);
 router.put('/resetpassword/:resetToken',  resetPassword);
 router.delete("/delete-account/:email?/:userId?",deleteAccount);
-router.put("/profile/:id",bookMarkController.updateProfile)
+router.put("/profile/:id",upload.single('image'),bookMarkController.updateProfile)
 export default router; 
