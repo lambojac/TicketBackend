@@ -2,39 +2,37 @@ import User from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 
-const Secure = asyncHandler( async (req, res, next) => {
+const Secure = asyncHandler(async (req, res, next) => {
     try {
-        const token = req.headers.token;
-        //console.log(token);
+        // Get the Authorization header
+        const authHeader = req.headers.authorization;
 
-        if (!token) {
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
             res.status(401);
-            throw new Error("Not authorized, please login");
+            throw new Error("Not authorized, token missing or invalid");
         }
 
-        //verify the token
-        const verified = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] });
-        //console.log(verified);
+        // Extract the token from the header
+        const token = authHeader.split(" ")[1];
 
+        // Verify the token
+        const verified = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ["HS256"] });
 
-        // get user Id from the token
-        // find the user
-        // .select("-password") this is to eliminate the password field.
+        // Find the user by the ID in the token and exclude the password field
         const user = await User.findById(verified.id).select("-password");
-        //console.log(user);
-         
+
         if (!user) {
             res.status(401);
             throw new Error("User not found");
         }
-        //provide user details to any one that uses this middleware.
-        req.user = user;
-        //console.log(req.user);
-        next();
 
+        // Attach the user to the request object
+        req.user = user;
+
+        next();
     } catch (error) {
         res.status(401);
-        throw new Error("Not authourized, Please login");
+        throw new Error("Not authorized, please login");
     }
 });
 
