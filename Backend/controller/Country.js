@@ -75,3 +75,81 @@ export const getCountryById = asyncHandler(async (req, res) => {
 });
 
 
+// Edit a country by ID
+export const editCountry = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+  
+    // Extract fields from request body
+    const {
+      title,
+      president,
+      independence_date,
+      capital,
+      currency,
+      population,
+      demonym,
+      latitude,
+      longitude,
+      description,
+      language,
+      time_zone,
+      link,
+      association_leader_name,
+      association_leader_email,
+      association_leader_phone,
+    } = req.body;
+  
+    // Process image updates if available
+    const image = req.files?.image?.[0]?.buffer.toString('base64') || undefined;
+    const association_leader_photo =
+      req.files?.association_leader_photo?.[0]?.buffer.toString('base64') || undefined;
+  
+    // Update country
+    const updatedCountry = await Country.findByIdAndUpdate(
+      id,
+      {
+        ...(title && { title }),
+        ...(president && { president }),
+        ...(independence_date && { independence_date }),
+        ...(capital && { capital }),
+        ...(currency && { currency }),
+        ...(population && { population }),
+        ...(demonym && { demonym }),
+        ...(latitude && { latitude }),
+        ...(longitude && { longitude }),
+        ...(description && { description }),
+        ...(language && { language }),
+        ...(time_zone && { time_zone }),
+        ...(link && { link }),
+        ...(association_leader_name && { association_leader_name }),
+        ...(association_leader_email && { association_leader_email }),
+        ...(association_leader_phone && { association_leader_phone }),
+        ...(image && { image }),
+        ...(association_leader_photo && { association_leader_photo }),
+      },
+      { new: true } // Return the updated document
+    );
+  
+    if (!updatedCountry) {
+      res.status(404);
+      throw new Error('Country not found');
+    }
+  
+    res.status(200).json(updatedCountry);
+  });
+  
+  // Delete a country by ID
+  export const deleteCountry = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+  
+    const country = await Country.findByIdAndDelete(id);
+  
+    if (!country) {
+      res.status(404);
+      throw new Error('Country not found');
+    }
+  
+    res.status(200).json({ message: 'Country deleted successfully' });
+  });
+  
+

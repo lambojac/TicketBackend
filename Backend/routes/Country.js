@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import { createCountry, getAllCountries, getCountryById } from '../controller/Country.js';
+import { createCountry, deleteCountry, editCountry, getAllCountries, getCountryById } from '../controller/Country.js';
 
 
 const router = express.Router();
@@ -21,5 +21,9 @@ router.get('/countries', getAllCountries);
 
 // Route to get a particular country by ID
 router.get('/countries/:id', getCountryById);
+//edit country
+router.put('/countries/:id', editCountry);
+//delete country
+router.delete('/countries/:id', deleteCountry);
 
 export default router;
