@@ -16,7 +16,7 @@ const eventController = {
   // Get event details
   getEventDetails: async (req, res) => {
     try {
-      const event = await Event.findById(req.params.id);
+      const event = await Event.findById(req.params.id).populate('createdBy', 'username email');
       if (!event) {
         return res.status(404).json({ message: 'Event not found' });
       }
@@ -48,6 +48,7 @@ const eventController = {
         description,
         unit,
         image, // Store the image in Base64 format
+        createdBy: req.user.id
       });
 
       const savedEvent = await event.save();

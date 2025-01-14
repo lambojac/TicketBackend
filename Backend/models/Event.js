@@ -26,7 +26,9 @@ const eventSchema = new mongoose.Schema({
   },
   organizerPhoto: String,
   QRCodeLink: String
-}, {
+}, 
+
+{
   timestamps: true
 });
 

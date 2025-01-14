@@ -3,10 +3,10 @@ import User from "../models/userModel.js";
 import genToken from "./tokenGen.js"; // Utility to generate JWT
 
 const registerUser = asyncHandler(async (req, res) => {
-    const { full_name, email, password, confirm_password, phone_number = "+234" } = req.body;
+    const { full_name, role, email, password, confirm_password, phone_number = "+234" } = req.body;
 
     // Validate required fields
-    if (!full_name || !email || !password || !confirm_password) {
+    if (!full_name || !email || !password || !confirm_password||!role) {
         res.status(400);
         throw new Error("Please provide all required fields.");
     }
@@ -30,6 +30,7 @@ const registerUser = asyncHandler(async (req, res) => {
         email,
         password, 
         phone_number,
+        role,
     });
 
     if (user) {
@@ -52,6 +53,7 @@ const registerUser = asyncHandler(async (req, res) => {
             phone_number: user.phone_number,
             createdAt: user.createdAt,
             token,
+            role
         });
     } else {
         res.status(400);

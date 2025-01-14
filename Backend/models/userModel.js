@@ -40,6 +40,7 @@ const userSchema = new mongoose.Schema({
     confirm_password: {
         type: String,
     },
+    role: { type: String, enum: ['admin', 'user'], default: 'user' },
     interests: [{
         type: String
       }],
