@@ -13,6 +13,8 @@ import bookmark from "./routes/booKMark.js"
 import payment from "./routes/payment.js"
 import stripe from "./routes/stripe.js"
 import getAllUser from "./controller/getAllUser.js";
+import Secure from "./middleware/authMiddleware.js";
+import isAdmin from "./middleware/adminmiddleware.js";
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT;
@@ -34,7 +36,7 @@ app.use("/api/country",Countries)
 app.use("/api/bookmark",bookmark)
 app.use("/api/paypal",payment)
 app.use("/api/stripe",stripe)
-app.use("/api/getusers",getAllUser)
+app.use("/api/getusers",Secure,isAdmin,getAllUser)
 //route
 app.get("/", (req, res) => {
     res.send("Home Page!");
