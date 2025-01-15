@@ -48,7 +48,7 @@ const eventController = {
         description,
         unit,
         image, // Store the image in Base64 format
-        createdBy: req.user.id
+        // createdBy: req.user.id
       });
 
       const savedEvent = await event.save();
