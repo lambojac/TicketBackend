@@ -41,6 +41,9 @@ const loginUser = asynchandler(async (req, res) => {
       full_name,
       email,
       phone_number,
+      role,
+      interests,
+      image
     } = user;
 
     // Include the user ID in the response
@@ -50,6 +53,9 @@ const loginUser = asynchandler(async (req, res) => {
       email,
       phone_number,
       token,
+      role,
+      interests,
+      image
     });
   } else {
     res.status(400);
