@@ -15,6 +15,7 @@ import stripe from "./routes/stripe.js"
 import getAllUser from "./controller/getAllUser.js";
 import Secure from "./middleware/authMiddleware.js";
 import isAdmin from "./middleware/adminmiddleware.js";
+import switchRole from "./routes/switchRole.js"
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT;
@@ -36,6 +37,7 @@ app.use("/api/country",Countries)
 app.use("/api/bookmark",bookmark)
 app.use("/api/paypal",payment)
 app.use("/api/stripe",stripe)
+app.use("/api/switch-role",switchRole)
 app.use("/api/getusers",Secure,isAdmin,getAllUser)
 //route
 app.get("/", (req, res) => {
