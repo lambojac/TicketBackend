@@ -7,6 +7,7 @@ const eventSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  paypalUsername:String,
   location: String,
   date: String,
   price: {
