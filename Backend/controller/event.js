@@ -29,7 +29,8 @@ const eventController = {
   // Create new event
   createEvent: async (req, res) => {
     try {
-      const { title, location, date, price, category, time, address, latitude, longitude, organiser, description, unit, paypalUsername } = req.body;
+      const { title, location, date, price, category, time, address, latitude, longitude, organiser, description, unit, paypalUsername,arts_and_crafts,
+        cultural_dance } = req.body;
 
       // Convert uploaded image to Base64
       const image = req.file ? req.file.buffer.toString('base64') : null;
@@ -48,7 +49,9 @@ const eventController = {
         description,
         unit,
         image, 
-        paypalUsername
+        paypalUsername,
+        arts_and_crafts,
+cultural_dance
         // Store the image in Base64 format
         // createdBy: req.user.id
       });
