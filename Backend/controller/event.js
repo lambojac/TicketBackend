@@ -1,5 +1,5 @@
 import Event from "../models/Event.js"
-
+import Transaction from "../models/Transaction.js";
 const eventController = {
   // Get featured and upcoming events
   getFeaturedEvents: async (req, res) => {
@@ -52,8 +52,8 @@ const eventController = {
         // Store the image in Base64 format
         // createdBy: req.user.id
       });
-
       const savedEvent = await event.save();
+    
       res.status(201).json(savedEvent);
     } catch (error) {
       res.status(400).json({ message: error.message });
@@ -89,8 +89,44 @@ const eventController = {
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
+  },
+
+
+   getEventBuyers : async (req, res) => {
+    try {
+      const { eventId } = req.params;
+  
+      // Check if event exists
+      const eventExists = await Event.findById(eventId);
+      if (!eventExists) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+  
+      // Fetch transactions for the specific event
+      const transactions = await Transaction.find({ ticketId: eventId, status: "PENDING" })//CHANGE THIS TO COMPLETED
+        .populate("userId", "username email");
+  
+      if (transactions.length === 0) {
+        return res.status(404).json({ message: "No tickets sold for this event" });
+      }
+  
+      // Format the response
+      const buyers = transactions.map((transaction) => ({
+        username: transaction.userId.username,
+        email: transaction.userId.email,
+        ticketCount: transaction.ticketCount,
+        amount: transaction.amount,
+        purchaseDate: transaction.createdAt,
+      }));
+  
+      res.status(200).json(buyers);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  
   }
-};
+}
+
 
 export default eventController
 

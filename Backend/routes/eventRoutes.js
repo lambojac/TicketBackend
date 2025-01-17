@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.get('/featured', eventController.getFeaturedEvents);
 router.get('/:id', eventController.getEventDetails);
+router.get("/:eventId/buyers", eventController.getEventBuyers);
 router.post('/createvent', upload.single('image'), eventController.createEvent);
 router.put('/:id', eventController.updateEvent);
 router.delete("/:id/delete",eventController.deleteEvent)
