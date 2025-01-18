@@ -94,40 +94,47 @@ cultural_dance
     }
   },
 
-
-   getEventBuyers : async (req, res) => {
-    try {
-      const { eventId } = req.params;
-  
-      // Check if event exists
-      const eventExists = await Event.findById(eventId);
-      if (!eventExists) {
-        return res.status(404).json({ message: "Event not found" });
+//geteventbuyer
+getEventBuyers : async (req, res) => {
+    
+      try {
+        const { eventId } = req.params;
+    
+        // Check if event exists
+        const eventExists = await Event.findById(eventId);
+        if (!eventExists) {
+          return res.status(404).json({ message: "Event not found" });
+        }
+    
+        // Fetch transactions for the specific event
+        const transactions = await Transaction.find({ ticketId: eventId, status: "PENDING" })//COMPLETED
+          .populate("userId", "username email");
+    
+        if (transactions.length === 0) {
+          return res.status(404).json({ message: "No tickets sold for this event" });
+        }
+    
+        // Calculate total tickets sold
+        const totalTicketsSold = transactions.reduce((total, transaction) => total + transaction.ticketCount, 0);
+    
+        // Format the buyers' details
+        const buyers = transactions.map((transaction) => ({
+          username: transaction.userId.username,
+          email: transaction.userId.email,
+          ticketCount: transaction.ticketCount,
+          amount: transaction.amount,
+          purchaseDate: transaction.createdAt,
+        }));
+    
+        // Return response with buyers and total tickets sold
+        res.status(200).json({
+          totalTicketsSold,
+          buyers,
+        });
+      } catch (error) {
+        res.status(500).json({ message: error.message });
       }
-  
-      // Fetch transactions for the specific event
-      const transactions = await Transaction.find({ ticketId: eventId, status: "PENDING" })//CHANGE THIS TO COMPLETED
-        .populate("userId", "username email");
-  
-      if (transactions.length === 0) {
-        return res.status(404).json({ message: "No tickets sold for this event" });
-      }
-  
-      // Format the response
-      const buyers = transactions.map((transaction) => ({
-        username: transaction.userId.username,
-        email: transaction.userId.email,
-        ticketCount: transaction.ticketCount,
-        amount: transaction.amount,
-        purchaseDate: transaction.createdAt,
-      }));
-  
-      res.status(200).json(buyers);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  
-  }
+}
 }
 
 

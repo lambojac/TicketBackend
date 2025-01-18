@@ -79,3 +79,13 @@ export const capturePayment = async (token) => {
     const captureData = await response.json();
     return captureData;
 };
+
+
+
+// application_context: {
+//     brand_name: 'Your App Name', // Displayed to the user on PayPal
+//     landing_page: 'LOGIN', // Or 'BILLING' if you want to show card details first
+//     user_action: 'PAY_NOW', // Makes the button say "Pay Now"
+//     return_url: 'https://yourdomain.com/api/orders/complete', // Redirect after approval
+//     cancel_url: 'https://yourdomain.com/api/orders/cancel',  // Redirect if cancelled
+// },
