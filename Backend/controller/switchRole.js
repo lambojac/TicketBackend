@@ -5,7 +5,7 @@ import User from "../models/userModel.js"
     const { role } = req.body;
 
     // Validate the role
-    if (!["special", "user"].includes(role)) {
+    if (!['user','ambassador','artist'].includes(role)) {
         return res.status(400).json({ message: "Invalid role. Allowed roles are 'special' and 'user'." });
     }
 
