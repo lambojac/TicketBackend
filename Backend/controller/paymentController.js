@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 const createOrderController = async (req, res) => {
     try {
         const { ticketId, ticketCount } = req.body;
-        const userId = req.user.id; // Assuming you have user authentication
+        const userId = req.user.id; 
 
         if (!ticketId || !ticketCount) {
             return res.status(400).send('Ticket ID and count are required.');
