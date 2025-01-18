@@ -51,6 +51,10 @@ export const createCountry = asyncHandler(async (req, res) => {
     });
   
     const savedCountry = await country.save();
+    req.io.emit("eventCreated", {
+      message: "A new country has been created!",
+      event: savedCountry,
+    });
     res.status(201).json(savedCountry);
   });
   

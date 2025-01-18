@@ -56,6 +56,11 @@ cultural_dance
         // createdBy: req.user.id
       });
       const savedEvent = await event.save();
+      // Emit event creation notification
+      req.io.emit("eventCreated", {
+        message: "A new event has been created!",
+        event: savedEvent,
+      });
     
       res.status(201).json(savedEvent);
     } catch (error) {
@@ -76,6 +81,11 @@ cultural_dance
       if (!event) {
         return res.status(404).json({ message: 'Event not found' });
       }
+      // Emit event update notification
+      req.io.emit("eventUpdated", {
+        message: "An event has been updated!",
+        event,
+      });
       res.json(event);
     } catch (error) {
       res.status(400).json({ message: error.message });

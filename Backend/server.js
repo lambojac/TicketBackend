@@ -34,7 +34,11 @@ const io = new Server(server, {
   },
 });
 
-
+// Attach Socket.IO to req
+app.use((req, res, next) => {
+    req.io = io;
+    next();
+  });
 // Initialize Socket.IO
 chatSocket(io);
 
