@@ -118,7 +118,7 @@ getEventBuyers : async (req, res) => {
     
         // Fetch transactions for the specific event
         const transactions = await Transaction.find({ ticketId: eventId, status: "PENDING" })//COMPLETED
-          .populate("userId", "username email");
+          .populate("userId", "email full_name");
     
         if (transactions.length === 0) {
           return res.status(404).json({ message: "No tickets sold for this event" });
@@ -130,7 +130,7 @@ getEventBuyers : async (req, res) => {
         // Format the buyers' details
         const buyers = transactions.map((transaction) => ({
           username: transaction.userId.username,
-          email: transaction.userId.email,
+          full_name: transaction.userId.full_name,
           ticketCount: transaction.ticketCount,
           amount: transaction.amount,
           purchaseDate: transaction.createdAt,
