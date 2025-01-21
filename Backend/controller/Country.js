@@ -139,6 +139,8 @@ export const editCountry = asyncHandler(async (req, res) => {
       association_leader_name,
       association_leader_email,
       association_leader_phone,
+      arts_and_crafts,
+    cultural_dance
     } = req.body;
   
     // Process image updates if available
@@ -151,6 +153,8 @@ export const editCountry = asyncHandler(async (req, res) => {
       id,
       {
         ...(title && { title }),
+        ...(arts_and_crafts && { arts_and_crafts }),
+        ...(cultural_dance && { cultural_dance }),
         ...(gallery && { gallery}),
         ...(president && { president }),
         ...(independence_date && { independence_date }),
