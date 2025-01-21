@@ -11,7 +11,8 @@ router.post(
     '/countries',
     upload.fields([
       { name: 'image', maxCount: 1 }, 
-      { name: 'association_leader_photo', maxCount: 1 }
+      { name: 'association_leader_photo', maxCount: 1 },
+      { name: "gallery", maxCount: 6 },
     ]),
     createCountry
   );

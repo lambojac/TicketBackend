@@ -27,11 +27,15 @@ export const createCountry = asyncHandler(async (req, res) => {
     } = req.body;
   
     const image = req.files?.image?.[0]?.buffer.toString('base64') || null;
+    const gallery=
+    req.files?.gallery?.slice(0, 6).map(file => file.buffer.toString('base64')) || [];
+
     const association_leader_photo =
       req.files?.association_leader_photo?.[0]?.buffer.toString('base64') || null;
   
     const country = new Country({
       image,
+      gallery,
       title,
       president,
       independence_date,

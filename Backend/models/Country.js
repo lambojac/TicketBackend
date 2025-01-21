@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 const countrySchema = new mongoose.Schema(
   {
     image: { type: String,  },
+    gallery:[{type:String}],
     title: { type: String, },
     president: { type: String, },
     independence_date: { type: String,  },
