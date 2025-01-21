@@ -15,6 +15,8 @@ const countrySchema = new mongoose.Schema(
     longitude: { type: Number,  },
     description: { type: String,  },
     language: { type: String,  },
+    arts_and_crafts:{type:String},
+    cultural_dance:{type:String},
     time_zone: { type: String,  },
     link: { type: String, default: "" },
     association_leader_name: { type: String, },

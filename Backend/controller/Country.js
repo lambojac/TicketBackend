@@ -21,6 +21,8 @@ export const createCountry = asyncHandler(async (req, res) => {
       association_leader_name,
       association_leader_email,
       association_leader_phone,
+      arts_and_crafts,
+       cultural_dance,
       created_by_id,
     } = req.body;
   
@@ -47,32 +49,49 @@ export const createCountry = asyncHandler(async (req, res) => {
       association_leader_email,
       association_leader_phone,
       association_leader_photo,
-      created_by_id,
+      arts_and_crafts, 
+      cultural_dance,
+      created_by_id
     });
   
     const savedCountry = await country.save();
 
+   
     // Create and save a notification
     const notification = new Notification({
-      message: `A new country "${savedCountry.title}" has been created!`,
-      countryId: savedCountry._id,
+      title: 'New Country Created',
+      message: `A new country ${savedCountry.title} has been created!`,
+      countryID: savedCountry._id,
+      type: 'country',
+      createdAt: new Date(),
     });
     await notification.save();
   
     // Emit notification to all clients
     req.io.emit("newCountryNotification", {
-      message: notification.message,
-      country: {
-        id: savedCountry._id,
-        title: savedCountry.title,
-        capital: savedCountry.capital,
+      notification: {
+        _id: notification._id,
+        title: notification.title,
+        message: notification.message,
+        countryID: notification.countryID,
+        type: notification.type,
+        createdAt: notification.createdAt,
       },
     });
   
-    res.status(201).json({ country: savedCountry, notification });
-  });
-  
-
+    // Format the response to match the expected structure
+    res.status(201).json({
+      country: savedCountry,
+      notification: {
+        _id: notification._id,
+        countryID: notification.countryID,
+        title: notification.title,
+        message: notification.message,
+        type: notification.type,
+        createdAt: notification.createdAt,
+      },
+    });
+});
 // Get all countries (only title and image)
 export const getAllCountries = asyncHandler(async (req, res) => {
   const countries = await Country.find({}, 'title image');

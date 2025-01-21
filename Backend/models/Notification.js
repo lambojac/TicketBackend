@@ -1,13 +1,12 @@
 import mongoose from "mongoose";
 
-const notificationSchema = new mongoose.Schema(
-  {
+const notificationSchema = new mongoose.Schema({
+    title: { type: String, required: true },
     message: { type: String, required: true },
-    countryId: { type: mongoose.Schema.Types.ObjectId, ref: "Country" },
-    eventId: { type: mongoose.Schema.Types.ObjectId, ref: "" },
+    eventID: { type: mongoose.Schema.Types.ObjectId, ref: 'Event',  },
+    countryID: { type: mongoose.Schema.Types.ObjectId, ref: 'Country',  },
+    type: { type: String, enum: ['event', 'country'], required: true },
     createdAt: { type: Date, default: Date.now },
-  },
-  { timestamps: true }
-);
+}, { timestamps: true });
 
 export default mongoose.model("Notification", notificationSchema);

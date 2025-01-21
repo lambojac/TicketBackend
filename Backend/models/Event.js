@@ -9,8 +9,7 @@ const eventSchema = new mongoose.Schema({
   },
   paypalUsername:String,
   location: String,
-  arts_and_crafts:String,
-cultural_dance:String,
+ 
   date: String,
   price: {
     type:String,

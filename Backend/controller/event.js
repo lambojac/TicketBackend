@@ -31,7 +31,7 @@ const eventController = {
     try {
         const { 
           title, location, date, price, category, time, address, latitude, longitude, organiser, description, unit, 
-            paypalUsername, arts_and_crafts, cultural_dance 
+            paypalUsername,  
         } = req.body;
 
         // Convert uploaded image to Base64
@@ -39,32 +39,37 @@ const eventController = {
 
         const event = new Event({
             title, location, date, price, category, time, address, latitude, longitude, organiser, description, unit,
-            image, paypalUsername, arts_and_crafts, cultural_dance
+            image, paypalUsername, 
         });
 
         const savedEvent = await event.save();
 
-        // Create and save a notification
-        const notification = new Notification({
-            message: `A new event "${savedEvent.title}" has been created!`,
-            eventId: savedEvent._id,
-        });
-        await notification.save();
+         // Create and save a notification
+         const notification = new Notification({
+          title: 'New Event Created',
+          message: `A new event ${savedEvent.title} has been created!`,
+          eventID: savedEvent._id,
+          type: 'event',
+          createdAt: new Date(),
+      });
+      await notification.save();
 
-        // Emit notification to all clients
-        req.io.emit("newEventNotification", {
-            message: notification.message,
-            event: {
-                id: savedEvent._id,
-                title: savedEvent.title,
-                location: savedEvent.location,
-            },
-        });
+      // Emit notification to all clients
+      req.io.emit("newEventNotification", {
+          notification: {
+              _id: notification._id,
+              title: notification.title,
+              message: notification.message,
+              eventID: notification.eventID,
+              type: notification.type,
+              createdAt: notification.createdAt,
+          },
+      });
 
-        res.status(201).json({ event: savedEvent, notification });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+      res.status(201).json({ event: savedEvent, notification });
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
 },
 
 
