@@ -124,6 +124,7 @@ export const editCountry = asyncHandler(async (req, res) => {
     const {
       title,
       president,
+      gallery,
       independence_date,
       capital,
       currency,
@@ -150,6 +151,7 @@ export const editCountry = asyncHandler(async (req, res) => {
       id,
       {
         ...(title && { title }),
+        ...(gallery && { gallery}),
         ...(president && { president }),
         ...(independence_date && { independence_date }),
         ...(capital && { capital }),
