@@ -1,5 +1,6 @@
 import Event from "../models/Event.js"
 import Transaction from "../models/Transaction.js";
+import Notification from "../models/Notification.js";
 const eventController = {
   // Get featured and upcoming events
   getFeaturedEvents: async (req, res) => {
@@ -26,47 +27,46 @@ const eventController = {
     }
   },
 
-  // Create new event
   createEvent: async (req, res) => {
     try {
-      const { title, location, date, price, category, time, address, latitude, longitude, organiser, description, unit, paypalUsername,arts_and_crafts,
-        cultural_dance } = req.body;
+        const { 
+          title, location, date, price, category, time, address, latitude, longitude, organiser, description, unit, 
+            paypalUsername, arts_and_crafts, cultural_dance 
+        } = req.body;
 
-      // Convert uploaded image to Base64
-      const image = req.file ? req.file.buffer.toString('base64') : null;
+        // Convert uploaded image to Base64
+        const image = req.file ? req.file.buffer.toString('base64') : null;
 
-      const event = new Event({
-        title,
-        location,
-        date,
-        price,
-        category,
-        time,
-        address,
-        latitude,
-        longitude,
-        organiser,
-        description,
-        unit,
-        image, 
-        paypalUsername,
-        arts_and_crafts,
-cultural_dance
-        // Store the image in Base64 format
-        // createdBy: req.user.id
-      });
-      const savedEvent = await event.save();
-      // Emit event creation notification
-      req.io.emit("eventCreated", {
-        message: "A new event has been created!",
-        event: savedEvent,
-      });
-    
-      res.status(201).json(savedEvent);
+        const event = new Event({
+            title, location, date, price, category, time, address, latitude, longitude, organiser, description, unit,
+            image, paypalUsername, arts_and_crafts, cultural_dance
+        });
+
+        const savedEvent = await event.save();
+
+        // Create and save a notification
+        const notification = new Notification({
+            message: `A new event "${savedEvent.title}" has been created!`,
+            eventId: savedEvent._id,
+        });
+        await notification.save();
+
+        // Emit notification to all clients
+        req.io.emit("newEventNotification", {
+            message: notification.message,
+            event: {
+                id: savedEvent._id,
+                title: savedEvent.title,
+                location: savedEvent.location,
+            },
+        });
+
+        res.status(201).json({ event: savedEvent, notification });
     } catch (error) {
-      res.status(400).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
-  },
+},
+
 
   
 

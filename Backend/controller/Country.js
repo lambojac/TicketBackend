@@ -1,6 +1,6 @@
 import  Country from '../models/Country.js'; 
 import asyncHandler from 'express-async-handler';
-
+import Notification from '../models/Notification.js';
 
 // Create a new country
 export const createCountry = asyncHandler(async (req, res) => {
@@ -51,11 +51,25 @@ export const createCountry = asyncHandler(async (req, res) => {
     });
   
     const savedCountry = await country.save();
-    req.io.emit("eventCreated", {
-      message: "A new country has been created!",
-      event: savedCountry,
+
+    // Create and save a notification
+    const notification = new Notification({
+      message: `A new country "${savedCountry.title}" has been created!`,
+      countryId: savedCountry._id,
     });
-    res.status(201).json(savedCountry);
+    await notification.save();
+  
+    // Emit notification to all clients
+    req.io.emit("newCountryNotification", {
+      message: notification.message,
+      country: {
+        id: savedCountry._id,
+        title: savedCountry.title,
+        capital: savedCountry.capital,
+      },
+    });
+  
+    res.status(201).json({ country: savedCountry, notification });
   });
   
 

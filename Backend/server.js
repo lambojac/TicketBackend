@@ -20,6 +20,7 @@ import isAdmin from "./middleware/adminmiddleware.js";
 import switchRole from "./routes/switchRole.js"
 import chatRoutes from "./routes/chatRoutes.js";
 import { chatSocket } from "./socket/chatSocket.js";
+import notification from "./routes/notification.js"
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT;
@@ -51,6 +52,7 @@ app.use(bodyParser.json());
 
 // routes middleware
 app.use("/api/chats", chatRoutes);
+app.use("/api/notification",notification)
 app.use("/api/users", userRouter);
 app.use("/api/events",eventRoutes)
 app.use("/api/country",Countries)
@@ -59,6 +61,7 @@ app.use("/api/paypal",payment)
 app.use("/api/stripe",stripe)
 app.use("/api/switch-role",switchRole)
 app.use("/api/getusers",Secure,isAdmin,getAllUser)
+
 //route
 app.get("/", (req, res) => {
     res.send("Home Page!");
