@@ -124,7 +124,7 @@ export const editCountry = asyncHandler(async (req, res) => {
     const {
       title,
       president,
-      gallery,
+     
       independence_date,
       capital,
       currency,
@@ -147,6 +147,8 @@ export const editCountry = asyncHandler(async (req, res) => {
     const image = req.files?.image?.[0]?.buffer.toString('base64') || undefined;
     const association_leader_photo =
       req.files?.association_leader_photo?.[0]?.buffer.toString('base64') || undefined;
+      const gallery=
+    req.files?.gallery?.slice(0, 6).map(file => file.buffer.toString('base64')) || [];
   
     // Update country
     const updatedCountry = await Country.findByIdAndUpdate(
