@@ -60,7 +60,7 @@ const completeOrderController = async (req, res) => {
         // Find the pending transaction
         transaction = await Transaction.findOne({
             paypalOrderId: token,
-            status: 'PENDING'
+            status: 'COMPLETED'
         });
 
         if (!transaction) {
