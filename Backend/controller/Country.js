@@ -124,7 +124,6 @@ export const editCountry = asyncHandler(async (req, res) => {
     const {
       title,
       president,
-     
       independence_date,
       capital,
       currency,
