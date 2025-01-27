@@ -5,7 +5,7 @@ import Secure from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 router.post('/pay', Secure, createOrderController);
-router.get('/complete-order',Secure, completeOrderController);
+router.get('/complete-order',completeOrderController);
 router.get('/cancel-order', Secure, cancelOrderController);
 router.get("/payment-history",Secure,getPaymentHistory)
 // stripe
