@@ -1,6 +1,3 @@
-// models/Transaction.js
-import mongoose from 'mongoose';
-
 const transactionSchema = new mongoose.Schema({
     transactionId: {
         type: String,
@@ -18,8 +15,10 @@ const transactionSchema = new mongoose.Schema({
         required: true
     },
     paypalOrderId: {
-        type: String,
-        required: true
+        type: String
+    },
+    stripePaymentIntentId: {  
+        type: String
     },
     amount: {
         type: Number,
@@ -32,7 +31,6 @@ const transactionSchema = new mongoose.Schema({
     status: {
         type: String,
         enum: ['PENDING', 'COMPLETED', 'FAILED', 'CANCELLED'],
-        
     },
     paymentDetails: {
         type: Object
@@ -42,5 +40,3 @@ const transactionSchema = new mongoose.Schema({
         default: Date.now
     }
 });
-
-export default mongoose.model('Transaction', transactionSchema);

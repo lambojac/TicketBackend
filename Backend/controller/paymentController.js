@@ -110,7 +110,7 @@ const cancelOrderController = async (req, res) => {
 // New endpoint to get payment history
 const getPaymentHistory = async (req, res) => {
     try {
-        const userId = req.user._id; // Assuming you have user authentication
+        const userId = req.user._id; 
         const transactions = await Transaction.find({ userId })
             .populate('ticketId')
             .sort({ createdAt: -1 });
