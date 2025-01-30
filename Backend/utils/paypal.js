@@ -53,8 +53,8 @@ export const createOrder = async (totalPrice) => {
                 brand_name: 'Ticket Backend', 
                 landing_page: 'LOGIN', 
                 user_action: 'PAY_NOW', 
-                return_url: 'https://afrohub.onrender.com/api/paypal/complete-order', 
-                cancel_url: 'https://afrohub.onrender.com/api/paypal/cancel', 
+                return_url: 'http://localhost:6000/api/paypal/complete-order', 
+                cancel_url: 'http://localhost:6000/api/paypal/cancel', 
             },
         }),
     });
