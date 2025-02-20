@@ -1,7 +1,7 @@
 import  express from 'express';
 import { createOrderController, completeOrderController,cancelOrderController, getPaymentHistory } from '../controller/paymentController.js';
 import { createStripePaymentIntentController, confirmStripePaymentController } from '../controller/StripePayment.js';
-import Secure from '../middleware/authMiddleware.js';
+import Secure from '../middleware/auth.js';
 const router = express.Router();
 
 router.post('/pay', Secure, createOrderController);

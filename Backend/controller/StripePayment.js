@@ -1,10 +1,6 @@
 import { createStripePaymentIntent, confirmStripePayment } from '../utils/stripe.js';
 import Ticket from '../models/Event.js';
-
-// Create a payment intent and return client secret
-import { createStripePaymentIntent, confirmStripePayment } from '../utils/stripe.js';
 import Transaction from '../models/Transaction.js';
-import Ticket from '../models/Event.js';
 import { v4 as uuidv4 } from 'uuid';
 
 // Create a payment intent and return client secret
