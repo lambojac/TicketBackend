@@ -15,7 +15,7 @@ import bookmark from "./routes/booKMark.js"
 import payment from "./routes/payment.js"
 import stripe from "./routes/stripe.js"
 import getAllUser from "./controller/getAllUser.js";
-import Secure from "./middleware/authMiddleware.js";
+import Secure from "./middleware/auth.js";
 import isAdmin from "./middleware/adminmiddleware.js";
 import switchRole from "./routes/switchRole.js"
 import chatRoutes from "./routes/chatRoutes.js";
