@@ -15,8 +15,6 @@ import bookmark from "./routes/booKMark.js"
 import payment from "./routes/payment.js"
 import stripe from "./routes/stripe.js"
 import getAllUser from "./controller/getAllUser.js";
-import Secure from "./middleware/auth.js";
-import isAdmin from "./middleware/adminmiddleware.js";
 import switchRole from "./routes/switchRole.js"
 import chatRoutes from "./routes/chatRoutes.js";
 import { chatSocket } from "./socket/chatSocket.js";
@@ -60,7 +58,7 @@ app.use("/api/bookmark",bookmark)
 app.use("/api/paypal",payment)
 app.use("/api/stripe",stripe)
 app.use("/api/switch-role",switchRole)
-app.use("/api/getusers",Secure,isAdmin,getAllUser)
+app.use("/api/getusers",getAllUser)
 
 //route
 app.get("/", (req, res) => {
