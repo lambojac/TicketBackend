@@ -19,6 +19,7 @@ import switchRole from "./routes/switchRole.js"
 import chatRoutes from "./routes/chatRoutes.js";
 import { chatSocket } from "./socket/chatSocket.js";
 import notification from "./routes/notification.js"
+import business from "./routes/business.js"
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT;
@@ -59,6 +60,7 @@ app.use("/api/paypal",payment)
 app.use("/api/stripe",stripe)
 app.use("/api/switch-role",switchRole)
 app.use("/api/getusers",getAllUser)
+app.use("/api/business",business)
 
 //route
 app.get("/", (req, res) => {
