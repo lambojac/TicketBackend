@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const eventSchema = new mongoose.Schema({
   id: Number,
   image: String,
+  geoTag:String,
   title: {
     type: String,
     required: true

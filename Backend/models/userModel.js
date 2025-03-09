@@ -40,14 +40,29 @@ const userSchema = new mongoose.Schema({
     confirm_password: {
         type: String,
     },
-    role: { type: String, enum: ['admin', 'user','ambassador',"artist"], default: 'user' },
+    role: { type: String, enum: ['admin', 'user','ambassador',"artist","sub_admin"], default: 'user' },
     interests: [{
         type: String
       }],
       bookmarkedEvents: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event'
-      }]
+      }],
+      entityDescription: {
+        type: String,
+        default: "",
+    },
+    countryLocated: {
+        type: String,
+        default: "",
+    },
+    countryRepresented: {
+        type: String,
+        default: "",
+    },
+    mediaFiles: [{
+        type: String, // List of media file URLs or paths
+    }]
     
 }, { timestamps: true });
 

@@ -31,7 +31,7 @@ const eventController = {
     try {
         const { 
           title, location, date, price, category, time, address, latitude, longitude, organiser, description, unit, 
-            paypalUsername,  
+            paypalUsername, geoTag
         } = req.body;
 
         // Convert uploaded image to Base64
@@ -39,7 +39,7 @@ const eventController = {
 
         const event = new Event({
             title, location, date, price, category, time, address, latitude, longitude, organiser, description, unit,
-            image, paypalUsername, 
+            image, paypalUsername, geoTag
         });
 
         const savedEvent = await event.save();

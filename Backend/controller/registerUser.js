@@ -3,47 +3,56 @@ import User from "../models/userModel.js";
 import genToken from "./tokenGen.js"; // Utility to generate JWT
 
 const registerUser = asyncHandler(async (req, res) => {
-    const { full_name, role, email, password, confirm_password, phone_number = "+234" } = req.body;
+    const { 
+        full_name, 
+        role, 
+        email, 
+        password, 
+        confirm_password, 
+        phone_number = "+234",
+        entityDescription = "",
+        countryLocated = "",
+        countryRepresented = "",
+        mediaFiles = []
+    } = req.body;
 
-    // Validate required fields
-    if (!full_name || !email || !password || !confirm_password||!role) {
+    if (!full_name || !email || !password || !confirm_password || !role) {
         res.status(400);
         throw new Error("Please provide all required fields.");
     }
 
-    // Password and confirm_password match check
     if (password !== confirm_password) {
         res.status(400);
         throw new Error("Passwords do not match.");
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
         res.status(400);
         throw new Error("User with this email already exists.");
     }
 
-    // Create a new user
     const user = await User.create({
         full_name,
         email,
         password, 
         phone_number,
         role,
+        entityDescription,
+        countryLocated,
+        countryRepresented,
+        mediaFiles
     });
 
     if (user) {
-        // Generate a JWT token
         const token = genToken(user._id);
 
-        // Set the token in an HTTP-only cookie
         res.cookie("token", token, {
             path: "/",
             httpOnly: true,
-            expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // Expires in 1 day
+            expires: new Date(Date.now() + 1000 * 60 * 60 * 24), 
             sameSite: "none",
-            secure: true, // Set to true if using HTTPS
+            secure: true, 
         });
 
         res.status(201).json({
@@ -51,6 +60,10 @@ const registerUser = asyncHandler(async (req, res) => {
             full_name: user.full_name,
             email: user.email,
             phone_number: user.phone_number,
+            entityDescription: user.entityDescription,
+            countryLocated: user.countryLocated,
+            countryRepresented: user.countryRepresented,
+            mediaFiles: user.mediaFiles,
             createdAt: user.createdAt,
             token,
             role
@@ -62,3 +75,4 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 export default registerUser;
+
