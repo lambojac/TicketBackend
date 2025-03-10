@@ -21,5 +21,5 @@ router.patch('/updatepassword', Secure,updatePassword);
 router.post('/forgotpassword',  forgotPassword);
 router.put('/resetpassword/:resetToken',  resetPassword);
 router.delete("/delete-account/:email?/:userId?",deleteAccount);
-router.put("/profile/:id",upload.single('image'),bookMarkController.updateProfile)
+router.patch("/profile/:id",upload.single('image'),bookMarkController.updateProfile)
 export default router; 

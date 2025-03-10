@@ -76,41 +76,71 @@ removeBookmarkedEvent: async (req, res) => {
 updateProfile: async (req, res) => {
   try {
     const { id } = req.params; // Extract user ID from request parameters
-    const { full_name, email, phone_number, interests } = req.body; // Extract other fields from request body
-
+    const { 
+      full_name, 
+      email, 
+      phone_number, 
+      interests,
+      role,
+      entityDescription,
+      countryLocated,
+      countryRepresented,
+      mediaFiles
+    } = req.body; // Extract all available fields from request body
+    
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
+    
     // Update the fields if provided
     if (full_name) user.full_name = full_name; // `name` will automatically be updated by the pre-save hook
     if (email) user.email = email;
     if (phone_number) user.phone_number = phone_number;
     if (interests) user.interests = interests; // Expecting an array
-
+    
+    // Handle additional fields from the schema
+    if (role && ['admin', 'user', 'ambassador', 'artist', 'sub_admin'].includes(role)) {
+      user.role = role;
+    }
+    
+    if (entityDescription !== undefined) user.entityDescription = entityDescription;
+    if (countryLocated !== undefined) user.countryLocated = countryLocated;
+    if (countryRepresented !== undefined) user.countryRepresented = countryRepresented;
+    
+    // Handle mediaFiles if provided (expecting an array of strings)
+    if (mediaFiles && Array.isArray(mediaFiles)) {
+      user.mediaFiles = mediaFiles;
+    }
+    
     // Handle image
     if (req.file) {
       user.image = req.file.buffer.toString("base64"); // Convert uploaded image to Base64
     }
-
+    
     // Save the updated user
     await user.save();
-
+    
     res.json({
       message: "Profile updated successfully",
       user: {
         full_name: user.full_name,
+        name: user.name, // Include the automatically generated name
         email: user.email,
         phone_number: user.phone_number,
         interests: user.interests,
-        image: user.image, // Explicitly include the image in the response
+        role: user.role,
+        entityDescription: user.entityDescription,
+        countryLocated: user.countryLocated,
+        countryRepresented: user.countryRepresented,
+        mediaFiles: user.mediaFiles,
+        image: user.image,
       },
     });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-},
+}
 
 
 }
