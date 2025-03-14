@@ -1,5 +1,22 @@
 import User from "../models/userModel.js";
+import cloudinary from '../config/cloudinary.js';
+import { Readable } from 'stream';
 
+// Helper function to upload buffer to Cloudinary
+const uploadToCloudinary = async (buffer, folder) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder: folder },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+    
+    const stream = Readable.from(buffer);
+    stream.pipe(uploadStream);
+  });
+};
 const bookMarkController = {
   // Get user profile
   getProfile: async (req, res) => {
@@ -73,13 +90,14 @@ removeBookmarkedEvent: async (req, res) => {
   }
 },
 //update profile
+// Update profile
 updateProfile: async (req, res) => {
   try {
     const { id } = req.params; // Extract user ID from request parameters
-    const { 
-      full_name, 
-      email, 
-      phone_number, 
+    const {
+      full_name,
+      email,
+      phone_number,
       interests,
       role,
       entityDescription,
@@ -87,40 +105,44 @@ updateProfile: async (req, res) => {
       countryRepresented,
       mediaFiles
     } = req.body; // Extract all available fields from request body
-    
+   
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    
+   
     // Update the fields if provided
     if (full_name) user.full_name = full_name; // `name` will automatically be updated by the pre-save hook
     if (email) user.email = email;
     if (phone_number) user.phone_number = phone_number;
     if (interests) user.interests = interests; // Expecting an array
-    
+   
     // Handle additional fields from the schema
     if (role && ['admin', 'user', 'ambassador', 'artist', 'sub_admin'].includes(role)) {
       user.role = role;
     }
-    
+   
     if (entityDescription !== undefined) user.entityDescription = entityDescription;
     if (countryLocated !== undefined) user.countryLocated = countryLocated;
     if (countryRepresented !== undefined) user.countryRepresented = countryRepresented;
-    
-    // Handle mediaFiles if provided (expecting an array of strings)
+   
+    // Handle mediaFiles if provided as URLs in the request body
     if (mediaFiles && Array.isArray(mediaFiles)) {
       user.mediaFiles = mediaFiles;
     }
-    
-    // Handle image
+   
+    // Handle image upload to Cloudinary
     if (req.file) {
-      user.image = req.file.buffer.toString("base64"); // Convert uploaded image to Base64
+      const imageUpload = await uploadToCloudinary(
+        req.file.buffer,
+        'users/profile'
+      );
+      user.image = imageUpload.secure_url;
     }
-    
+   
     // Save the updated user
     await user.save();
-    
+   
     res.json({
       message: "Profile updated successfully",
       user: {
@@ -141,7 +163,6 @@ updateProfile: async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 }
-
 
 }
 
