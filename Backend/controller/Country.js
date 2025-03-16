@@ -36,9 +36,9 @@ export const createCountry = asyncHandler(async (req, res) => {
     language,
     time_zone,
     link,
-    association_leader_name,
-    association_leader_email,
-    association_leader_phone,
+    // association_leader_name,
+    // association_leader_email,
+    // association_leader_phone,
     arts_and_crafts,
     cultural_dance,
     created_by_id,
@@ -55,27 +55,27 @@ export const createCountry = asyncHandler(async (req, res) => {
   }
 
   // Upload gallery images if provided
-  const galleryUrls = [];
-  if (req.files?.gallery) {
-    const galleryFiles = req.files.gallery.slice(0, 6);
-    for (const file of galleryFiles) {
-      const galleryUpload = await uploadToCloudinary(
-        file.buffer,
-        'countries/gallery'
-      );
-      galleryUrls.push(galleryUpload.secure_url);
-    }
-  }
+  // const galleryUrls = [];
+  // if (req.files?.gallery) {
+  //   const galleryFiles = req.files.gallery.slice(0, 6);
+  //   for (const file of galleryFiles) {
+  //     const galleryUpload = await uploadToCloudinary(
+  //       file.buffer,
+  //       'countries/gallery'
+  //     );
+  //     galleryUrls.push(galleryUpload.secure_url);
+  //   }
+  // }
 
   // Upload association leader photo if provided
-  let leaderPhotoUrl = null;
-  if (req.files?.association_leader_photo?.[0]) {
-    const leaderPhotoUpload = await uploadToCloudinary(
-      req.files.association_leader_photo[0].buffer,
-      'countries/leaders'
-    );
-    leaderPhotoUrl = leaderPhotoUpload.secure_url;
-  }
+  // let leaderPhotoUrl = null;
+  // if (req.files?.association_leader_photo?.[0]) {
+  //   const leaderPhotoUpload = await uploadToCloudinary(
+  //     req.files.association_leader_photo[0].buffer,
+  //     'countries/leaders'
+  //   );
+  //   leaderPhotoUrl = leaderPhotoUpload.secure_url;
+  // }
 
   const country = new Country({
     image: imageUrl,
@@ -93,10 +93,10 @@ export const createCountry = asyncHandler(async (req, res) => {
     language,
     time_zone,
     link,
-    association_leader_name,
-    association_leader_email,
-    association_leader_phone,
-    association_leader_photo: leaderPhotoUrl,
+    // association_leader_name,
+    // association_leader_email,
+    // association_leader_phone,
+    // association_leader_photo: leaderPhotoUrl,
     arts_and_crafts,
     cultural_dance,
     created_by_id
@@ -185,9 +185,9 @@ export const editCountry = asyncHandler(async (req, res) => {
     language,
     time_zone,
     link,
-    association_leader_name,
-    association_leader_email,
-    association_leader_phone,
+    // association_leader_name,
+    // association_leader_email,
+    // association_leader_phone,
     arts_and_crafts,
     cultural_dance
   } = req.body;
@@ -203,29 +203,29 @@ export const editCountry = asyncHandler(async (req, res) => {
   }
 
   // Upload gallery images if provided
-  let galleryUrls = existingCountry.gallery || [];
-  if (req.files?.gallery?.length > 0) {
-    // Replace existing gallery with new uploads
-    galleryUrls = [];
-    const galleryFiles = req.files.gallery.slice(0, 6);
-    for (const file of galleryFiles) {
-      const galleryUpload = await uploadToCloudinary(
-        file.buffer,
-        'countries/gallery'
-      );
-      galleryUrls.push(galleryUpload.secure_url);
-    }
-  }
+  // let galleryUrls = existingCountry.gallery || [];
+  // if (req.files?.gallery?.length > 0) {
+  //   // Replace existing gallery with new uploads
+  //   galleryUrls = [];
+  //   const galleryFiles = req.files.gallery.slice(0, 6);
+  //   for (const file of galleryFiles) {
+  //     const galleryUpload = await uploadToCloudinary(
+  //       file.buffer,
+  //       'countries/gallery'
+  //     );
+  //     galleryUrls.push(galleryUpload.secure_url);
+  //   }
+  // }
 
   // Upload association leader photo if provided
-  let leaderPhotoUrl = existingCountry.association_leader_photo;
-  if (req.files?.association_leader_photo?.[0]) {
-    const leaderPhotoUpload = await uploadToCloudinary(
-      req.files.association_leader_photo[0].buffer,
-      'countries/leaders'
-    );
-    leaderPhotoUrl = leaderPhotoUpload.secure_url;
-  }
+  // let leaderPhotoUrl = existingCountry.association_leader_photo;
+  // if (req.files?.association_leader_photo?.[0]) {
+  //   const leaderPhotoUpload = await uploadToCloudinary(
+  //     req.files.association_leader_photo[0].buffer,
+  //     'countries/leaders'
+  //   );
+  //   leaderPhotoUrl = leaderPhotoUpload.secure_url;
+  // }
 
   // Update country
   const updatedCountry = await Country.findByIdAndUpdate(
@@ -246,12 +246,12 @@ export const editCountry = asyncHandler(async (req, res) => {
       ...(language && { language }),
       ...(time_zone && { time_zone }),
       ...(link && { link }),
-      ...(association_leader_name && { association_leader_name }),
-      ...(association_leader_email && { association_leader_email }),
-      ...(association_leader_phone && { association_leader_phone }),
+      // ...(association_leader_name && { association_leader_name }),
+      // ...(association_leader_email && { association_leader_email }),
+      // ...(association_leader_phone && { association_leader_phone }),
       image: imageUrl,
-      gallery: galleryUrls,
-      association_leader_photo: leaderPhotoUrl,
+      // gallery: galleryUrls,
+      // association_leader_photo: leaderPhotoUrl,
     },
     { new: true } // Return the updated document
   );

@@ -91,9 +91,10 @@ removeBookmarkedEvent: async (req, res) => {
 },
 //update profile
 // Update profile
-updateProfile: async (req, res) => {
+
+ updateProfile :async (req, res) => {
   try {
-    const { id } = req.params; // Extract user ID from request parameters
+    const { id } = req.params;
     const {
       full_name,
       email,
@@ -103,8 +104,7 @@ updateProfile: async (req, res) => {
       entityDescription,
       countryLocated,
       countryRepresented,
-      mediaFiles
-    } = req.body; // Extract all available fields from request body
+    } = req.body;
    
     const user = await User.findById(id);
     if (!user) {
@@ -112,10 +112,10 @@ updateProfile: async (req, res) => {
     }
    
     // Update the fields if provided
-    if (full_name) user.full_name = full_name; // `name` will automatically be updated by the pre-save hook
+    if (full_name) user.full_name = full_name;
     if (email) user.email = email;
     if (phone_number) user.phone_number = phone_number;
-    if (interests) user.interests = interests; // Expecting an array
+    if (interests) user.interests = interests;
    
     // Handle additional fields from the schema
     if (role && ['admin', 'user', 'ambassador', 'artist', 'sub_admin'].includes(role)) {
@@ -127,17 +127,32 @@ updateProfile: async (req, res) => {
     if (countryRepresented !== undefined) user.countryRepresented = countryRepresented;
    
     // Handle mediaFiles if provided as URLs in the request body
-    if (mediaFiles && Array.isArray(mediaFiles)) {
-      user.mediaFiles = mediaFiles;
+    if (req.body.mediaFiles && Array.isArray(req.body.mediaFiles)) {
+      user.mediaFiles = req.body.mediaFiles;
     }
    
-    // Handle image upload to Cloudinary
+    // Handle profile image upload
     if (req.file) {
       const imageUpload = await uploadToCloudinary(
         req.file.buffer,
         'users/profile'
       );
       user.image = imageUpload.secure_url;
+    }
+   
+    // Handle gallery uploads
+    if (req.files?.gallery?.length > 0) {
+      // Replace existing gallery with new uploads
+      let mediaFiles = [];
+      const galleryFiles = req.files.gallery.slice(0, 6); // Limit to 6 files
+      for (const file of galleryFiles) {
+        const galleryUpload = await uploadToCloudinary(
+          file.buffer,
+          'users/gallery'
+        );
+        mediaFiles.push(galleryUpload.secure_url);
+      }
+      user.mediaFiles = mediaFiles;
     }
    
     // Save the updated user
@@ -147,7 +162,7 @@ updateProfile: async (req, res) => {
       message: "Profile updated successfully",
       user: {
         full_name: user.full_name,
-        name: user.name, // Include the automatically generated name
+        name: user.name,
         email: user.email,
         phone_number: user.phone_number,
         interests: user.interests,
@@ -162,8 +177,7 @@ updateProfile: async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-}
-
+ }
 }
 
 export  default bookMarkController

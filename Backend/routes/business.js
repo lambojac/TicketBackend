@@ -14,7 +14,7 @@ import{
 router.post('/', upload.array('mediaFiles', 5), createBusiness);
 router.get('/', getBusinesses);
 router.get('/:id', getBusinessById);
-router.put('/:id',upload.array('mediaFiles', 5), updateBusiness);
+router.patch('/:id',upload.array('mediaFiles', 5), updateBusiness);
 router.delete('/:id', deleteBusiness);
 
 export default router;

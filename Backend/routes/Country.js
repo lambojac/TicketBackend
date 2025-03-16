@@ -11,8 +11,8 @@ router.post(
     '/countries',
     upload.fields([
       { name: 'image', maxCount: 1 }, 
-      { name: 'association_leader_photo', maxCount: 1 },
-      { name: "gallery", maxCount: 6 },
+      // { name: 'association_leader_photo', maxCount: 1 },
+      // { name: "gallery", maxCount: 6 },
     ]),
     createCountry
   );
@@ -24,8 +24,8 @@ router.get('/countries', getAllCountries);
 router.get('/countries/:id', getCountryById);
 //edit country
 router.put('/countries/:id', upload.fields([
-  { name: 'image', maxCount: 1 }, 
-  { name: 'association_leader_photo', maxCount: 1 },
+  // { name: 'image', maxCount: 1 }, 
+  // { name: 'association_leader_photo', maxCount: 1 },
   { name: "gallery", maxCount: 6 },
 ]), editCountry);
 //delete country

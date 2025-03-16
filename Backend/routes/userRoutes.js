@@ -13,7 +13,7 @@ import Secure from '../middleware/auth.js';
 const router = express.Router();
 
 //Routes
-router.post('/register', registerUser);
+router.post('/register',  upload.fields([{ name: "gallery", maxCount: 6 }]), registerUser);
 
 router.post("/login",loginUser)
 router.get("/logout",logOut)
@@ -21,5 +21,8 @@ router.patch('/updatepassword', Secure,updatePassword);
 router.post('/forgotpassword',  forgotPassword);
 router.put('/resetpassword/:resetToken',  resetPassword);
 router.delete("/delete-account/:email?/:userId?",deleteAccount);
-router.patch("/profile/:id",upload.single('image'),bookMarkController.updateProfile)
+router.patch("/profile/:id", upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "gallery", maxCount: 6 }
+  ]), bookMarkController.updateProfile)
 export default router; 
