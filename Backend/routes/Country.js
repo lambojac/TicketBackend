@@ -23,7 +23,7 @@ router.get('/countries', getAllCountries);
 // Route to get a particular country by ID
 router.get('/countries/:id', getCountryById);
 //edit country
-router.put('/countries/:id', upload.fields([
+router.patch('/countries/:id', upload.fields([
   // { name: 'image', maxCount: 1 }, 
   // { name: 'association_leader_photo', maxCount: 1 },
   { name: "gallery", maxCount: 6 },
