@@ -1,11 +1,11 @@
 import  mongoose from 'mongoose';
 
 const BusinessSchema = new mongoose.Schema({
-    businessTitle: { type: String, required: true },
-    businessDescription: { type: String, required: true },
-    businessLocation: { type: String, required: true },
-    businessAddress: { type: String, required: true },
-    businessCategory: { type: String, required: true },
+    businessTitle: { type: String,},
+    businessDescription: { type: String, },
+    businessLocation: { type: String, },
+    businessAddress: { type: String,  },
+    businessCategory: { type: String,  },
     twitter: String,
     facebook: String,
     linkedIn: String,
@@ -14,8 +14,8 @@ const BusinessSchema = new mongoose.Schema({
     whatsapp: String,
     mediaFiles: [
         {
-            fileName: { type: String, required: true },
-            fileUrl: { type: String, required: true }
+            fileName: { type: String,  },
+            fileUrl: { type: String,  }
         }
     ]
 });

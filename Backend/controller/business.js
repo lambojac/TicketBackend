@@ -1,65 +1,140 @@
+import asyncHandler from "express-async-handler";
 import Business from '../models/business.js';
 import cloudinary from '../config/cloudinary.js';
+import path from 'path';
 
 // CREATE
-export const createBusiness = async (req, res) => {
-    try {
-        const files = req.files;
-        const mediaFiles = [];
+export const createBusiness = asyncHandler(async (req, res) => {
+  const {
+    businessTitle,
+    businessDescription,
+    businessLocation,
+    businessAddress,
+    businessCategory,
+    twitter,
+    facebook,
+    linkedIn,
+    instagram,
+    webAddress,
+    whatsapp
+  } = req.body;
 
-        if (files) {
-            for (const file of files) {
-                const result = await cloudinary.uploader.upload(file.path);
-                mediaFiles.push({ fileName: file.originalname, fileUrl: result.secure_url });
-            }
-        }
+  // Validation for required fields
+  if (!businessTitle || !businessDescription || !businessLocation || !businessAddress || !businessCategory) {
+    res.status(400);
+    throw new Error("Please provide all required fields.");
+  }
 
-        const business = await Business.create({ ...req.body, mediaFiles });
-        res.status(201).json(business);
-    } catch (error) {
-        res.status(500).json({ message: 'Error creating business', error });
+  // Handle media files upload
+  let mediaFiles = [];
+  if (req.files && req.files.gallery) {
+    const galleryFiles = req.files.gallery;
+    for (const file of galleryFiles) {
+      try {
+        // The correct way to upload to cloudinary
+        const result = await cloudinary.uploader.upload(file.path);
+        mediaFiles.push({
+          fileName: file.originalname || path.basename(file.path),
+          fileUrl: result.secure_url
+        });
+      } catch (error) {
+        console.error("Error uploading to cloudinary:", error);
+        res.status(500);
+        throw new Error("Error uploading files to cloud storage.");
+      }
     }
-};
+  }
 
-// READ ALL
-export const getBusinesses = async (req, res) => {
-    try {
-        const businesses = await Business.find();
-        res.status(200).json(businesses);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching businesses', error });
-    }
-};
+  const business = await Business.create({
+    businessTitle,
+    businessDescription,
+    businessLocation,
+    businessAddress,
+    businessCategory,
+    twitter,
+    facebook,
+    linkedIn,
+    instagram,
+    webAddress,
+    whatsapp,
+    mediaFiles
+  });
 
-// READ BY ID
-export const getBusinessById = async (req, res) => {
-    try {
-        const business = await Business.findById(req.params.id);
-        if (!business) return res.status(404).json({ message: 'Business not found' });
-        res.status(200).json(business);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching business', error });
-    }
-};
+  if (business) {
+    res.status(201).json(business);
+  } else {
+    res.status(400);
+    throw new Error("Failed to create business.");
+  }
+});
 
 // UPDATE
-export const updateBusiness = async (req, res) => {
-    try {
-        const business = await Business.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!business) return res.status(404).json({ message: 'Business not found' });
-        res.status(200).json(business);
-    } catch (error) {
-        res.status(500).json({ message: 'Error updating business', error });
-    }
-};
+export const updateBusiness = asyncHandler(async (req, res) => {
+  const businessId = req.params.id;
+  const business = await Business.findById(businessId);
 
-// DELETE
-export const deleteBusiness = async (req, res) => {
-    try {
-        const business = await Business.findByIdAndDelete(req.params.id);
-        if (!business) return res.status(404).json({ message: 'Business not found' });
-        res.status(200).json({ message: 'Business deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Error deleting business', error });
+  if (!business) {
+    res.status(404);
+    throw new Error("Business not found");
+  }
+
+  // Handle media files upload for update
+  let mediaFiles = [...business.mediaFiles]; // Start with existing files
+  
+  if (req.files && req.files.gallery) {
+    const galleryFiles = req.files.gallery;
+    for (const file of galleryFiles) {
+      try {
+        // The correct way to upload to cloudinary
+        const result = await cloudinary.uploader.upload(file.path);
+        mediaFiles.push({
+          fileName: file.originalname || path.basename(file.path),
+          fileUrl: result.secure_url
+        });
+      } catch (error) {
+        console.error("Error uploading to cloudinary:", error);
+        res.status(500);
+        throw new Error("Error uploading files to cloud storage.");
+      }
     }
-};
+  }
+
+  const updatedBusiness = await Business.findByIdAndUpdate(
+    businessId,
+    {
+      ...req.body,
+      mediaFiles
+    },
+    { new: true }
+  );
+
+  res.status(200).json(updatedBusiness);
+});
+
+// The rest of your controllers remain the same
+export const getBusinesses = asyncHandler(async (req, res) => {
+  const businesses = await Business.find();
+  res.status(200).json(businesses);
+});
+
+export const getBusinessById = asyncHandler(async (req, res) => {
+  const business = await Business.findById(req.params.id);
+  
+  if (!business) {
+    res.status(404);
+    throw new Error("Business not found");
+  }
+  
+  res.status(200).json(business);
+});
+
+export const deleteBusiness = asyncHandler(async (req, res) => {
+  const business = await Business.findByIdAndDelete(req.params.id);
+  
+  if (!business) {
+    res.status(404);
+    throw new Error("Business not found");
+  }
+  
+  res.status(200).json({ message: 'Business deleted successfully' });
+});
