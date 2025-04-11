@@ -1,3 +1,4 @@
+
 import { createStripeCheckoutSession, retrieveCheckoutSession } from '../utils/stripe.js';
 import Ticket from '../models/Event.js';
 import Transaction from '../models/Transaction.js';
@@ -71,7 +72,7 @@ export const createTicketCheckoutSession = async (req, res) => {
 export const completeTicketPayment = async (req, res) => {
   try {
     const { session_id } = req.query;
-    console.log('Received session_id:', session_id);
+    
     if (!session_id) {
       return res.status(400).json({ message: 'Session ID is required.' });
     }

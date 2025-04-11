@@ -1,10 +1,12 @@
 import  express from 'express';
-import { createStripePaymentIntentController, confirmStripePaymentController } from '../controller/StripePayment.js';
+import { createTicketCheckoutSession, completeTicketPayment,cancelTicketPayment,getPaymentStatus } from '../controller/StripePayment.js';
 
 const router = express.Router();
-// stripe
-router.post('/create-payment-intent', createStripePaymentIntentController);
-router.post('/confirm-payment', confirmStripePaymentController);
+
+router.post('/create-payment-intent', createTicketCheckoutSession);
+router.post('/complete-payment', completeTicketPayment);
+router.post('/cancel-payment', cancelTicketPayment);
+router.post('/get-payment-status', getPaymentStatus);
 
 export default router;
 

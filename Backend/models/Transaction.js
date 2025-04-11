@@ -19,11 +19,11 @@ const transactionSchema = new mongoose.Schema({
     },
     paypalOrderId: {
         type: String,
-        required: true
+      
     },
     amount: {
         type: Number,
-        required: true
+        
     },
     stripePaymentIntentId: {  
         type: String

@@ -1,31 +1,43 @@
 import Stripe from 'stripe';
 import dotenv from 'dotenv';
 
-// Load environment variables
-dotenv.config();
 
+dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// Function to create a payment intent
-export const createStripePaymentIntent = async (totalPrice) => {
-    if (!Number.isInteger(totalPrice)) {
-        throw new Error('Total price must be a whole number in usd.');
-    }
 
-    const paymentIntent = await stripe.paymentIntents.create({
-        amount: totalPrice *100,
-        currency: 'usd',
-        payment_method_types: ['card'], // Accepting card payments
+export const createStripeCheckoutSession = async (ticketTitle, totalPrice, ticketCount, successUrl, cancelUrl, metadata) => {
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'payment',
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: { name: ticketTitle },
+            unit_amount: totalPrice * 100, 
+          },
+          quantity: ticketCount,
+        },
+      ],
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      metadata: metadata,
     });
-
-    return paymentIntent;
+    
+    return session;
+  } catch (error) {
+    throw new Error(`Error creating checkout session: ${error.message}`);
+  }
 };
 
-// Function to confirm a payment
-export const confirmStripePayment = async (paymentIntentId) => {
-    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-    if (paymentIntent.status !== 'succeeded') {
-        throw new Error('Payment not completed.');
-    }
-    return paymentIntent;
+
+export const retrieveCheckoutSession = async (sessionId) => {
+  try {
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    return session;
+  } catch (error) {
+    throw new Error(`Error retrieving checkout session: ${error.message}`);
+  }
 };

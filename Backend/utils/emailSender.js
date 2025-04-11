@@ -8,8 +8,8 @@ const sendEmail = async (subject, message, send_to, sent_from,  reply_to) => {
         port: 465,
         secure: true, 
         auth: {
-            user: process.env.EMAIL_USER, // generated sender mail user
-            pass: process.env.EMAIL_PASS, // generated sender mail password
+            user: process.env.EMAIL_USER, 
+            pass: process.env.EMAIL_PASS,
         },
         tls: {
             rejectUnauthorized: false

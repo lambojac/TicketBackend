@@ -1,14 +1,14 @@
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 
-// Load environment variables
+
 dotenv.config();
 
-const PAYPAL_API = process.env.PAYPAL_API || 'https://api-m.sandbox.paypal.com'; // Sandbox or Live API
+const PAYPAL_API = process.env.PAYPAL_API || 'https://api-m.sandbox.paypal.com'; 
 const CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
 const CLIENT_SECRET = process.env.PAYPAL_SECRET;
 
-// Function to get an access token from PayPal
+
 const getAccessToken = async () => {
     const credentials = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64');
     const response = await fetch(`${PAYPAL_API}/v1/oauth2/token`, {
@@ -29,7 +29,7 @@ const getAccessToken = async () => {
     return data.access_token;
 };
 
-// Function to create an order for ticket purchase
+
 export const createOrder = async (totalPrice) => {
     const accessToken = await getAccessToken();
     const response = await fetch(`${PAYPAL_API}/v2/checkout/orders`, {
@@ -42,9 +42,9 @@ export const createOrder = async (totalPrice) => {
             intent: 'CAPTURE',
             purchase_units: [
                 {
-                    description: 'Ticket Purchase', // Describe transaction
+                    description: 'Ticket Purchase',
                     amount: {
-                        currency_code: 'USD', // currency
+                        currency_code: 'USD', 
                         value: totalPrice.toFixed(2),
                     },
                 },
@@ -68,7 +68,7 @@ export const createOrder = async (totalPrice) => {
     return orderData;
 };
 
-// Function to capture a payment for ticket purchase
+
 export const capturePayment = async (token) => {
     const accessToken = await getAccessToken();
     const response = await fetch(`${PAYPAL_API}/v2/checkout/orders/${token}/capture`, {
@@ -89,10 +89,3 @@ export const capturePayment = async (token) => {
 
 
 
-// application_context: {
-//     brand_name: 'Your App Name', // Displayed to the user on PayPal
-//     landing_page: 'LOGIN', // Or 'BILLING' if you want to show card details first
-//     user_action: 'PAY_NOW', // Makes the button say "Pay Now"
-//     return_url: 'https://yourdomain.com/api/orders/complete', // Redirect after approval
-//     cancel_url: 'https://yourdomain.com/api/orders/cancel',  // Redirect if cancelled
-// },
