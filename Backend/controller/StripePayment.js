@@ -32,8 +32,8 @@ export const createTicketCheckoutSession = async (req, res) => {
       ticket.title,
       totalPrice,
       ticketCount,
-      `afrohub://payment-successful?session_id={CHECKOUT_SESSION_ID}`,
-      `afrohub:/payment-cancelled`,
+      `${process.env.BASE_URL}/payment-successful?session_id={CHECKOUT_SESSION_ID}`,
+      `${process.env.BASE_URL}/payment-cancelled`,
       { 
         userId: userId,
         ticketId: ticketId,
