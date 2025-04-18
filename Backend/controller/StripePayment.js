@@ -32,8 +32,8 @@ export const createTicketCheckoutSession = async (req, res) => {
       ticket.title,
       totalPrice,
       ticketCount,
-      `${process.env.BASE_URL}/payment-successful?session_id={CHECKOUT_SESSION_ID}`,
-      `${process.env.BASE_URL}/payment-cancelled`,
+      `afrohub://payment-successful?session_id={CHECKOUT_SESSION_ID}`,
+      `afrohub:/payment-cancelled`,
       { 
         userId: userId,
         ticketId: ticketId,
@@ -49,7 +49,7 @@ export const createTicketCheckoutSession = async (req, res) => {
       stripeSessionId: session.id,
       amount: totalPrice,
       ticketCount,
-      status: 'PENDING'  
+      status: 'PAID'  
     });
     
     await transaction.save();
