@@ -4,9 +4,9 @@ import { createTicketCheckoutSession, completeTicketPayment,cancelTicketPayment,
 const router = express.Router();
 
 router.post('/create-payment-intent', createTicketCheckoutSession);
-router.post('/complete-payment', completeTicketPayment);
-router.post('/cancel-payment', cancelTicketPayment);
-router.post('/get-payment-status', getPaymentStatus);
+router.get('/complete-payment/:session_id', completeTicketPayment);
+router.get('/cancel-payment', cancelTicketPayment);
+router.get('/get-payment-status/:transactionId', getPaymentStatus);
 
 export default router;
 

@@ -4,18 +4,17 @@ import mongoose from 'mongoose';
 const transactionSchema = new mongoose.Schema({
     transactionId: {
         type: String,
-        required: true,
-        unique: true
+       
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+    
     },
     ticketId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event',
-        required: true
+        
     },
     paypalOrderId: {
         type: String,
@@ -43,7 +42,8 @@ const transactionSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    stripeSessionId: { type: String },
 });
 
 export default mongoose.model('Transaction', transactionSchema);
