@@ -1,4 +1,3 @@
-// models/Transaction.js
 import mongoose from 'mongoose';
 
 const transactionSchema = new mongoose.Schema({
@@ -42,6 +41,9 @@ const transactionSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    paymentStatus:{
+        type:String,
     },
     stripeSessionId: { type: String },
 });
