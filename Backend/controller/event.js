@@ -173,7 +173,7 @@ const eventController = {
       }
     
       // Fetch transactions for the specific event
-      const transactions = await Transaction.find({ ticketId: eventId, status: "PENDING" }) //COMPLETED
+      const transactions = await Transaction.find({ ticketId: eventId, paymentStatus: "paid" }) 
         .populate("userId", "email full_name");
     
       if (transactions.length === 0) {

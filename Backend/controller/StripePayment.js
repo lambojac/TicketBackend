@@ -17,6 +17,18 @@ export const getalltransaction=async(req,res)=>{
         console.log(err)
     }
 }
+export const deleteTransaction=async(req,res)=>{
+try{
+const findtransaction=await Transaction.findByIdAndDelete(req.params.id)
+if(findtransaction){
+    res.status(200).json({message:"transaction deleted"})
+
+
+}
+}catch(err){
+    console.log(err)
+}
+}
 export const createTicketCheckoutSession = async (req, res) => {
     try {
       const { userId, ticketId, ticketCount } = req.body;
@@ -49,6 +61,7 @@ export const createTicketCheckoutSession = async (req, res) => {
           transactionId: transactionId
         }
       );
+      console.log(session)
       const paymentStatus = session.payment_status;
       const transaction = new Transaction({
         transactionId: transactionId,
