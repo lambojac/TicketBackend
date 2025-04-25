@@ -6,6 +6,7 @@ import express from "express";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import { connectDB } from "./config/DbConn.js";
+import setupSwagger from './swagger.js';
 import userRouter from "./routes/userRoutes.js";
 import errorHandler from "./middleware/errorMiddleware.js";
 import cookieParser from "cookie-parser";
@@ -43,6 +44,7 @@ app.use((req, res, next) => {
 chatSocket(io);
 
 //app middleware
+
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
@@ -50,6 +52,7 @@ app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 // routes middleware
+setupSwagger(app);
 app.use("/api/chats", chatRoutes);
 app.use("/api/notification",notification)
 app.use("/api/users", userRouter);
