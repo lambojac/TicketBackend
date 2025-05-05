@@ -166,7 +166,7 @@ router.post('/createvent', upload.single('image'), eventController.createEvent);
  *       404:
  *         description: Event not found
  */
-router.patch('/:id', eventController.updateEvent);
+router.patch('/:id',upload.single('image'), eventController.updateEvent);
 
 /**
  * @swagger
